@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Hexagon from './components/hexagon';
-import Nav from './components/nav';
 import {colors} from './util/css-util';
 
 const hexainfos = [
