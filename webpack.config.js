@@ -9,7 +9,25 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 loader: "babel-loader"
-            }
+            },
+			{
+				test: /\.ttf$/,
+				use: [
+					{
+						loader: 'ttf-loader',
+						options: {
+							name: './fonts/[hash].[ext]',
+						}
+					},
+					{
+						loader: 'file-loader'
+					}
+				]
+			},
+			{
+				test: /\.css$/,
+				loader: "style-loader!css-loader"
+			}
         ]
     },
     output: {

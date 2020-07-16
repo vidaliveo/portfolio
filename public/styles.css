@@ -1,3 +1,14 @@
-.pretty-blue {
-    color: cornflowerblue;
+@font-face{
+	font-family: myFont;
+	src: url('fonts/Myfont-Regular.ttf');
+	src: url('fonts/Myfont-Regular.ttf') format('truetype'),
+		 url('fonts/Myfont-Regular.otf') format('opentype');
+}
+
+*{
+	font-family: myFont;
+}
+
+.hexacolor{
+	cursor: url(images/brush.png), pointer;
 }
