@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Hexagon from './components/hexagon';
-import Nav from './components/nav';
 import {colors} from './util/css-util';
 
 const hexainfos = [
@@ -11,6 +10,7 @@ const hexainfos = [
 		{
 			id: 1,
 			hasButtons: true,
+			letter: 'H',
 			display: true
 		}
 	],
@@ -24,8 +24,8 @@ const hexainfos = [
 		{},
 		{
 			id: 2,
-			linkto: '/about',
 			text: 'about',
+			letter: 'A',
 			display: true
 		},
 		{}
@@ -35,8 +35,8 @@ const hexainfos = [
 		{},
 		{
 			id: 3,
-			linkto: '/contact',
 			text: 'contact',
+			letter: 'C',
 			display: true
 		},
 		{}
@@ -45,8 +45,8 @@ const hexainfos = [
 		{},
 		{
 			id: 4,
-			linkto: '/projecten',
 			text: 'projecten',
+			letter: 'P',
 			display: true
 		},
 		{}
@@ -75,12 +75,13 @@ export default class Main extends React.Component{
 		this.setState({
 			pageContent : hexaText
 		})
+		console.log('hoi');
 	}
 	colorClick = (colorName) => {
 		this.setState({
 			mainColor : colorName
 		})
-		console.log(this.state, colorName);
+		
 	}
 	
 	render(){
@@ -95,29 +96,50 @@ export default class Main extends React.Component{
 		const hexapoly = `25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%`;
 
 		// hexanav
-		const xN = x/3.5;
+		const xN = x/1.5;
 		const yN = Math.sqrt(Math.pow(xN, 2) - Math.pow((xN/2), 2));
-		const strokeN = (xN/5);
-		const hexagroupWidthN = (xN*5)+(strokeN*6);
-			
-		const {mainColor} = this.state;
-			
+		const strokeN = (xN/100)*3;
+		const hexagroupWidthN = (xN + strokeN/2)*1.5;
+		const hexagon = `M 0 ${yN} L ${xN/2} 0 L ${xN*1.5} 0 L ${xN*2} ${yN} L ${xN*1.5} ${yN*2} L ${xN/2} ${yN*2} Z`;		
+		
+		const {mainColor, hexaClick} = this.state;
+		
 		return(
-			<StyledMain className={this.state.pageContent} mainColor={mainColor}>
+			<StyledMain className={this.state.pageContent} mainColor={mainColor} xN={xN}>
 				<nav>
-					{hexainfos.map((infos, indexOuter) =>
-						<div key={indexOuter} className="hexacol">
-							{infos.map((info, indexInner) =>
-								<Hexagon 
-									info={info} 
-									key={indexInner} 
-									hexaProps={{x, y, stroke, info, 
-										colorClick:() => this.colorClick(), 
-										hexaClick:() => this.hexaClick(info.text)}}
-								/>
-							)}
-						</div>
-					)}
+					<div>
+						{hexainfos.map((infos, indexOuter) =>
+							<div key={indexOuter} className="hexacol">
+								{infos.map((info, indexInner) =>
+									<StyledNavHexagon 
+										info={info} 
+										key={indexInner}
+										xN={xN} 
+										yN={yN} 
+										strokeN={strokeN}
+										hexagon={hexagon}
+										hexapoly={hexapoly}
+										mainColor={mainColor}
+										onClick={() => this.hexaClick(info.text)}
+										className={`${info.display ? 'show' : 'hide'} ${info.hasButtons ? 'paint' : ''}`}
+										hexaProps={{x, y, stroke, info, 
+											colorClick:() => this.colorClick(), 
+											hexaClick:() => this.hexaClick(info.text)}}
+									>
+										<span className={info.hasButtons ? 'hide' : 'show'}>{info.letter}</span>
+										<svg
+											version="1.1" 
+											xmlns="http://www.w3.org/2000/svg" 
+											viewBox={`0 0 ${xN*2} ${yN*2}`}
+											className={info.hasButtons ? 'hide' : 'show'}
+										>	
+											<path d={hexagon}></path>
+										</svg>
+									</StyledNavHexagon>
+								)}
+							</div>
+						)}
+					</div>
 				</nav>
 				{this.state.pageContent === 'contact' ? 
 					<StyledMain className="content contact">
@@ -143,7 +165,7 @@ export default class Main extends React.Component{
 					</StyledMain> 
 				: this.state.pageContent === 'about' ? 
 					<StyledMain className="content about">
-						<h2>Over mij</h2>					
+						<h1>Over mij</h1>					
 						<p>Als front-end developer vind ik het leuk om creatieve designs te maken en deze om te zetten naar werkende websites. Ik vind het belangrijk om creativiteit en UX te combineren om unieke producten te maken die prettig aanvoelen. Door mijn leergierigheid blijf ik in ontwikkeling en vind ik manieren om uitdagende problemen op te lossen.</p>
 						<div className="myInfo">
 							<div>
@@ -203,15 +225,13 @@ const StyledMain = styled.section`
 	width: 100vw;
 	height: 100vh;
 	color: rgb(${({mainColor}) => mainColor});
-	
 	nav{
-		// width: ${({xN}) => xN}px;
+		width: ${({xN}) => xN}px;
+		position: sticky;
 		top: 0;
-		hexacolumn{
-			
-		}
-		.hide, .paint{
-			display: none;
+		&>div{
+			position: absolute;
+			top: 0;
 		}
 	}
 	&.home{
@@ -239,24 +259,25 @@ const StyledMain = styled.section`
 	.about, .contact{
 		max-width: 800px;
 		line-height: 33px;
-		font-size: 1.8em;
+		font-size: 1.5em;
 		letter-spacing: 3px;
 		word-spacing: 5px;
-		margin: 20vh auto;
+		margin: 0 auto;
 		h1{
 			text-transform: uppercase;
+			font-size: 1.5em;
 		}
 	}
 	
 	.about{
 		.myInfo{
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 			.profile{
-			
+				margin-left: 100px;
 			}
 			.skills{
-				margin-left: 100px;
+				
 				&>li{
 					margin-top: 15px;
 					ul{
@@ -273,10 +294,8 @@ const StyledMain = styled.section`
 	.contact{
 		max-width: 900px;
 		line-height: 25px;
-		font-size: 1.3em;
 		letter-spacing: 3px;
 		word-spacing: 5px;
-		margin: 20vh auto;
 		h1{
 			text-align: center;
 		}
@@ -286,7 +305,6 @@ const StyledMain = styled.section`
 			display: flex;
 			flex-direction: column;
 			flex-wrap: wrap;
-			font-family: Calibri, sans-serif;
 			fieldset{
 				width: 100%;
 				background-color: rgb(${colors.grayMediumDark});
@@ -322,7 +340,7 @@ const StyledMain = styled.section`
 		
 		input, select, textarea, input[type="submit"]{
 			background-color: rgb(${colors.grayUltraLight});
-			font-family: Calibri, sans-serif;
+			font-size: 1em;
 			border: 0;
 			border-radius: 5px;
 			&:hover{
@@ -351,4 +369,57 @@ const StyledMain = styled.section`
 		}
 	}
 `
+
+const StyledNavHexagon = styled.div`
+	width: ${({xN}) => xN}px;
+	height: ${({yN}) => yN}px;
+	text-align: center;
+	clip-path: polygon(${({hexapoly}) => hexapoly});
+	position: relative;	
+	cursor: pointer;
+	box-sizing: border-box;
+	&.hide{
+		display: none;
+	}
+	&.show{
+		visibility: visible;
+	}
+	&:hover{
+		background-color: rgba(${({mainColor}) => mainColor},0.7);
+	}
+	
+	span{
+		width: ${({xN}) => xN}px;
+		height: ${({yN}) => yN}px;
+		line-height: ${({xN}) => xN}px;
+		color: rgb(${({mainColor}) => mainColor});
+		background-color: rgba(${({mainColor}) => mainColor},0);
+		font-size: ${({xN}) => xN/2}px;
+		z-index: 10;
+		clip-path: polygon(${({hexapoly}) => hexapoly});
+		// &:hover{
+			// background-color: rgba(${({mainColor}) => mainColor},0.7);
+		// }
+	}
+	
+	svg{
+		width: ${({xN, strokeN}) => xN}px;
+		height: ${({yN, strokeN}) => yN}px;
+		background-color: rgb(${({mainColor}) => mainColor});
+		padding: ${({strokeN}) => strokeN}px;
+		transform: translate(0, 0);
+		fill-opacity: 0.8;
+		stroke-opacity: 0.5;
+		clip-path: polygon(${({hexapoly}) => hexapoly});
+		&:hover{
+			fill-opacity: 0.3;
+		}
+		text{
+			font-size: 30px;
+		}
+	}
+`
+
+
+
 

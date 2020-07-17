@@ -121,6 +121,10 @@ const StyledHexagon = styled.div`
 		visibility: visible;
 	}
 	
+	.hide{
+		display: none;
+	}
+	
 	.hexagroupC{
 		width: ${({hexagroupWidthC}) => hexagroupWidthC}px;
 		margin: 0 auto;
@@ -175,10 +179,6 @@ const StyledHexagon = styled.div`
 		text{
 			font-size: 30px;
 		}
-	}
-	
-	.hide{
-		display: none;
 	}
 	
 	&.paint{

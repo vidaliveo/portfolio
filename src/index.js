@@ -21,7 +21,10 @@ const GlobalStyle = createGlobalStyle`
 	body{
 		background-color: rgb(${grayDark});
 		font-family: Calibri, sans-serif;
+		margin: 0;
+		padding: 20px;
 		overflow-x: hidden;
+		overflow-y: hidden;
 	}
 	
 	ul{
